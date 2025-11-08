@@ -1,6 +1,6 @@
 # Octant v2 Ecosystem Dashboard
 
-**Live Demo:** [Your Vercel/Netlify URL]  
+**Live Demo:** [https://octant-dashboard.vercel.app/]  
 **Hackathon Track:** Best Public Goods Project ($3,000)  
 **Built For:** Octant v2 Hackathon 2024
 
@@ -62,7 +62,7 @@ A beautiful, intuitive dashboard that:
 
 ## 🚀 **Live Demo**
 
-**Dashboard URL:** [https://your-dashboard.vercel.app](https://your-dashboard.vercel.app)
+**Dashboard URL:** [https://octant-dashboard.vercel.app/](https://octant-dashboard.vercel.app/)
 
 **Deployed Contracts:**
 - Morpho Strategy: `0x8ea3Fa89931d7fC9A401E31329BA378A1BE95664`
@@ -405,23 +405,6 @@ MIT License - feel free to use, modify, and distribute.
 - Open source community
 
 ---
-
-## 📸 **Screenshots**
-
-### Dashboard Overview
-![Dashboard Overview](screenshots/overview.png)
-
-### Strategy Details
-![Strategy Cards](screenshots/strategies.png)
-
-### Live Data
-![Live Metrics](screenshots/live-data.png)
-
----
-
-## 🎬 **Demo Video**
-
-**Watch the full demo:** [YouTube Link]
 
 **Quick Preview:**
 1. Dashboard loads with live data
