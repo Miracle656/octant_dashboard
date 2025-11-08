@@ -7,7 +7,13 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'react-hot-toast';
@@ -20,8 +26,9 @@ import {
 	ArrowDownToLine,
 	ArrowUpFromLine,
 	RefreshCw,
-	Loader2
+	Loader2,
 } from 'lucide-react';
+import { Link } from 'react-router';
 
 // ABIs
 const STRATEGY_ABI = [
@@ -233,109 +240,108 @@ export default function OctantDashboard() {
 	}
 
 	const handleDeposit = async () => {
-	if (!authenticated || !user?.wallet?.address || !selectedStrategy) {
-		toast.error('Please connect wallet first');
-		return;
-	}
-
-	try {
-		setDepositing(true);
-		
-		// Get fresh provider
-		const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-		const signer = provider.getSigner();
-		
-		// First, get the asset address from the strategy
-		const strategyContract = new ethers.Contract(
-			selectedStrategy.address,
-			STRATEGY_ABI,
-			provider // Use provider first to read
-		);
-		
-		const assetAddress = await strategyContract.asset();
-		
-		// Now get asset contract
-		const assetContract = new ethers.Contract(
-			assetAddress,
-			ERC20_ABI,
-			signer
-		);
-		
-		// Get strategy contract with signer for transactions
-		const strategyWithSigner = new ethers.Contract(
-			selectedStrategy.address,
-			STRATEGY_ABI,
-			signer
-		);
-		
-		const amount = ethers.utils.parseUnits(depositAmount, selectedStrategy.decimals);
-		
-		// Check allowance
-		const allowance = await assetContract.allowance(user.wallet.address, selectedStrategy.address);
-		
-		if (allowance.lt(amount)) {
-			toast.info('Approving tokens...');
-			const approveTx = await assetContract.approve(selectedStrategy.address, amount);
-			await approveTx.wait();
-			toast.success('Tokens approved!');
+		if (!authenticated || !user?.wallet?.address || !selectedStrategy) {
+			toast.error('Please connect wallet first');
+			return;
 		}
-		
-		// Deposit
-		toast.info('Depositing...');
-		const depositTx = await strategyWithSigner.deposit(amount, user.wallet.address);
-		await depositTx.wait();
-		
-		toast.success(`Successfully deposited ${depositAmount} ${selectedStrategy.asset}!`);
-		setDepositAmount('');
-		setDepositOpen(false);
-		fetchStrategies(); // Refresh data
-	} catch (err: any) {
-		console.error('Deposit error:', err);
-		toast.error(err.message || 'Deposit failed');
-	} finally {
-		setDepositing(false);
-	}
-};
+
+		try {
+			setDepositing(true);
+
+			// Get fresh provider
+			const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+			const signer = provider.getSigner();
+
+			// First, get the asset address from the strategy
+			const strategyContract = new ethers.Contract(
+				selectedStrategy.address,
+				STRATEGY_ABI,
+				provider // Use provider first to read
+			);
+
+			const assetAddress = await strategyContract.asset();
+
+			// Now get asset contract
+			const assetContract = new ethers.Contract(assetAddress, ERC20_ABI, signer);
+
+			// Get strategy contract with signer for transactions
+			const strategyWithSigner = new ethers.Contract(
+				selectedStrategy.address,
+				STRATEGY_ABI,
+				signer
+			);
+
+			const amount = ethers.utils.parseUnits(depositAmount, selectedStrategy.decimals);
+
+			// Check allowance
+			const allowance = await assetContract.allowance(
+				user.wallet.address,
+				selectedStrategy.address
+			);
+
+			if (allowance.lt(amount)) {
+				toast.info('Approving tokens...');
+				const approveTx = await assetContract.approve(selectedStrategy.address, amount);
+				await approveTx.wait();
+				toast.success('Tokens approved!');
+			}
+
+			// Deposit
+			toast.info('Depositing...');
+			const depositTx = await strategyWithSigner.deposit(amount, user.wallet.address);
+			await depositTx.wait();
+
+			toast.success(`Successfully deposited ${depositAmount} ${selectedStrategy.asset}!`);
+			setDepositAmount('');
+			setDepositOpen(false);
+			fetchStrategies(); // Refresh data
+		} catch (err: any) {
+			console.error('Deposit error:', err);
+			toast.error(err.message || 'Deposit failed');
+		} finally {
+			setDepositing(false);
+		}
+	};
 
 	const handleWithdraw = async () => {
-	if (!authenticated || !user?.wallet?.address || !selectedStrategy) {
-		toast.error('Please connect wallet first');
-		return;
-	}
+		if (!authenticated || !user?.wallet?.address || !selectedStrategy) {
+			toast.error('Please connect wallet first');
+			return;
+		}
 
-	try {
-		setWithdrawing(true);
-		
-		const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-		const signer = provider.getSigner();
-		
-		const strategyContract = new ethers.Contract(
-			selectedStrategy.address,
-			STRATEGY_ABI,
-			signer
-		);
-		
-		const amount = ethers.utils.parseUnits(withdrawAmount, selectedStrategy.decimals);
-		
-		toast.info('Withdrawing...');
-		const withdrawTx = await strategyContract.withdraw(
-			amount,
-			user.wallet.address,
-			user.wallet.address
-		);
-		await withdrawTx.wait();
-		
-		toast.success(`Successfully withdrew ${withdrawAmount} ${selectedStrategy.asset}!`);
-		setWithdrawAmount('');
-		setDepositOpen(false); // Close dialog
-		fetchStrategies(); // Refresh data
-	} catch (err: any) {
-		console.error('Withdraw error:', err);
-		toast.error(err.message || 'Withdrawal failed');
-	} finally {
-		setWithdrawing(false);
-	}
-};
+		try {
+			setWithdrawing(true);
+
+			const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+			const signer = provider.getSigner();
+
+			const strategyContract = new ethers.Contract(
+				selectedStrategy.address,
+				STRATEGY_ABI,
+				signer
+			);
+
+			const amount = ethers.utils.parseUnits(withdrawAmount, selectedStrategy.decimals);
+
+			toast.info('Withdrawing...');
+			const withdrawTx = await strategyContract.withdraw(
+				amount,
+				user.wallet.address,
+				user.wallet.address
+			);
+			await withdrawTx.wait();
+
+			toast.success(`Successfully withdrew ${withdrawAmount} ${selectedStrategy.asset}!`);
+			setWithdrawAmount('');
+			setDepositOpen(false); // Close dialog
+			fetchStrategies(); // Refresh data
+		} catch (err: any) {
+			console.error('Withdraw error:', err);
+			toast.error(err.message || 'Withdrawal failed');
+		} finally {
+			setWithdrawing(false);
+		}
+	};
 
 	return (
 		<div className="from-background to-muted/20 min-h-screen bg-gradient-to-b">
@@ -355,6 +361,12 @@ export default function OctantDashboard() {
 							</div>
 						</div>
 						<div className="flex items-center gap-2">
+							<Link to="/spark">
+								<Button variant="outline" size="sm">
+									<Zap className="mr-2 h-4 w-4" />
+									Spark Vaults
+								</Button>
+							</Link>
 							<Button
 								onClick={fetchStrategies}
 								variant="outline"
