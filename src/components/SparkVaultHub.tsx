@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
 	Dialog,
 	DialogContent,
@@ -270,12 +271,93 @@ export default function SparkVaultHub() {
 	const bestVault = vaults.reduce((best, v) => v.apy > best.apy ? v : best, vaults[0] || {});
 
 	if (!ready || loading) {
-		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<Loader2 className="h-8 w-8 animate-spin" />
-			</div>
-		);
-	}
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      {/* Header Skeleton */}
+      <header className="border-b bg-background/95 backdrop-blur">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-10 w-10 rounded-lg" />
+              <div>
+                <Skeleton className="h-6 w-40 mb-2" />
+                <Skeleton className="h-3 w-60" />
+              </div>
+            </div>
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8 space-y-8">
+        {/* Stats Skeleton */}
+        <div className="grid gap-4 md:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-8 w-32" />
+                </div>
+                <Skeleton className="h-8 w-8 rounded-full" />
+              </div>
+              <Skeleton className="h-4 w-full" />
+            </Card>
+          ))}
+        </div>
+
+        {/* Tabs Skeleton */}
+        <div className="space-y-6">
+          <Skeleton className="h-10 w-[400px]" />
+          
+          {/* Chart Skeleton */}
+          <Card className="p-6">
+            <Skeleton className="h-6 w-40 mb-4" />
+            <Skeleton className="h-[200px] w-full" />
+          </Card>
+
+          {/* Vault Cards Skeleton */}
+          <div className="grid gap-4 md:grid-cols-2">
+            {[1, 2].map((i) => (
+              <Card key={i} className="p-6">
+                <div className="space-y-4">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-40" />
+                      <Skeleton className="h-4 w-20" />
+                    </div>
+                    <Skeleton className="h-6 w-24" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Skeleton className="h-3 w-12" />
+                      <Skeleton className="h-6 w-24" />
+                    </div>
+                    <div className="space-y-2">
+                      <Skeleton className="h-3 w-12" />
+                      <Skeleton className="h-6 w-20" />
+                    </div>
+                  </div>
+
+                  <Skeleton className="h-px w-full" />
+
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
+
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
