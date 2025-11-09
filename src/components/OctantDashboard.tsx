@@ -39,11 +39,17 @@ const STRATEGY_ABI = [
 	'function dragonRouter() view returns (address)',
 	'function pricePerShare() view returns (uint256)',
 	'function asset() view returns (address)',
+	'function deposit(uint256 amount, address receiver) external',
+	'function withdraw(uint256 assets, address receiver, address owner) external returns (uint256)'
 ];
 
-const ERC20_ABI = [
-	'function symbol() view returns (string)',
-	'function decimals() view returns (uint8)',
+export const ERC20_ABI = [
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function allowance(address owner, address spender) external view returns (uint256)",
+  "function balanceOf(address account) external view returns (uint256)",
+  "function decimals() external view returns (uint8)",
+  "function symbol() external view returns (string)",
+  "function transfer(address to, uint256 amount) external returns (bool)",
 ];
 
 // Contract addresses
@@ -280,14 +286,14 @@ export default function OctantDashboard() {
 			);
 
 			if (allowance.lt(amount)) {
-				toast.info('Approving tokens...');
+				toast(`Approving ${depositAmount} ${selectedStrategy.asset}...`);
 				const approveTx = await assetContract.approve(selectedStrategy.address, amount);
 				await approveTx.wait();
 				toast.success('Tokens approved!');
 			}
 
 			// Deposit
-			toast.info('Depositing...');
+			toast(`Depositing ${depositAmount} ${selectedStrategy.asset}...`);
 			const depositTx = await strategyWithSigner.deposit(amount, user.wallet.address);
 			await depositTx.wait();
 
@@ -323,7 +329,7 @@ export default function OctantDashboard() {
 
 			const amount = ethers.utils.parseUnits(withdrawAmount, selectedStrategy.decimals);
 
-			toast.info('Withdrawing...');
+			toast(`Withdrawing ${withdrawAmount} ${selectedStrategy.asset}...`);
 			const withdrawTx = await strategyContract.withdraw(
 				amount,
 				user.wallet.address,
