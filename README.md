@@ -73,6 +73,11 @@ A beautiful, intuitive dashboard that:
 **Network:** Tenderly Mainnet Fork  
 **RPC:** `https://virtual.mainnet.eu.rpc.tenderly.co/82c86106-662e-4d7f-a974-c311987358ff`
 
+**Add to metamask**
+chain id: 8
+rpc: `https://virtual.mainnet.eu.rpc.tenderly.co/82c86106-662e-4d7f-a974-c311987358ff`
+blockexplorer: `https://dashboard.tenderly.co/explorer/vnet/82c86106-662e-4d7f-a974-c311987358ff/transactions`
+
 ---
 
 ## 🛠️ **Technical Stack**
